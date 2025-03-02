@@ -31,8 +31,7 @@ class LoginPage extends StatelessWidget {
   }
 
   void _showError(BuildContext context, String message) {
-    print('$message');
-    String errorMessage = '登录失败';
+    String errorMessage = 'Login failed';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(errorMessage)),
     );
@@ -49,7 +48,7 @@ class LoginPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '欢迎来到 MindCare',
+              'Welcome to MindCare',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF4FC3F7),
@@ -58,11 +57,11 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 40),
-            // 用户名输入框
+            // Username input field
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
-                labelText: '用户名',
+                labelText: 'Username',
                 prefixIcon: Icon(Icons.person, color: Color(0xFF4FC3F7)),
                 filled: true,
                 fillColor: Color(0xFFF1F8E9),
@@ -72,12 +71,12 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            // 密码输入框
+            // Password input field
             TextField(
               controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: '密码',
+                labelText: 'Password',
                 prefixIcon: Icon(Icons.lock, color: Color(0xFF4FC3F7)),
                 filled: true,
                 fillColor: Color(0xFFF1F8E9),
@@ -87,7 +86,7 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 40),
-            // 登录按钮
+            // Login button
             ElevatedButton(
               onPressed: () => _loginUser(context),
               style: ElevatedButton.styleFrom(
@@ -98,22 +97,22 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               child: Text(
-                '登录',
+                'Login',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
             SizedBox(height: 20),
-            // 前往注册页面按钮
+            // Navigate to registration page button
             TextButton(
               onPressed: () {
-                // 导航到注册页面
+                // Navigate to registration page
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RegistrationPage()),
                 );
               },
               child: Text(
-                '没有账户？前往注册',
+                'No account? Register here',
                 style: TextStyle(
                   color: Color(0xFFFFA726),
                   fontSize: 16,

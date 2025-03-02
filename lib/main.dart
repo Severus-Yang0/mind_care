@@ -6,22 +6,21 @@ import 'package:amplify_api/amplify_api.dart';
 import 'amplifyconfiguration.dart';
 import 'models/ModelProvider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await configureAmplify();
   runApp(MyApp());
 }
+
 Future<void> configureAmplify() async {
   final authPlugin = AmplifyAuthCognito();
   final apiPlugin = AmplifyAPI(options: APIPluginOptions(modelProvider: ModelProvider.instance));
-
   try {
     await Amplify.addPlugin(authPlugin);
     await Amplify.addPlugin(apiPlugin);
     await Amplify.configure(amplifyconfig);
   } catch (e) {
-    print('Amplify configuration failed: $e');
+    // Removed debug output
   }
 }
 
@@ -32,10 +31,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MindCare App',
       theme: ThemeData(
-        primaryColor: Color(0xFF4FC3F7), 
+        primaryColor: Color(0xFF4FC3F7),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         colorScheme:
-            ColorScheme.fromSwatch().copyWith(secondary: Color(0xFFFFA726)),
+          ColorScheme.fromSwatch().copyWith(secondary: Color(0xFFFFA726)),
       ),
       home: LoginPage(),
     );

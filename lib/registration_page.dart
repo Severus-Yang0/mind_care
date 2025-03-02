@@ -14,19 +14,19 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _confirmationCodeController =
-      TextEditingController(); // 验证码控制器
+      TextEditingController(); // Confirmation code controller
 
-  bool _isConfirmationStep = false; // 控制是否显示验证码输入
-  String _currentUsername = ''; // 存储注册时的用户名
+  bool _isConfirmationStep = false; // Controls whether to show confirmation code input
+  String _currentUsername = ''; // Stores the username used during registration
 
   Future<void> _registerUser(BuildContext context) async {
     if (_passwordController.text != _confirmPasswordController.text) {
-      _showError(context, '两次输入的密码不一致');
+      _showError(context, 'Passwords do not match');
       return;
     }
 
     try {
-      // 尝试注册用户
+      // Attempt to register user
       SignUpResult result = await Amplify.Auth.signUp(
         username: _usernameController.text.trim(),
         password: _passwordController.text.trim(),
@@ -35,32 +35,32 @@ class _RegistrationPageState extends State<RegistrationPage> {
         }),
       );
       if (result.isSignUpComplete) {
-        // 注册完成，跳转到登录页面或主页
+        // Registration complete, navigate to login page or home page
         Navigator.pop(context);
       } else {
         setState(() {
-          _isConfirmationStep = true; // 进入验证码输入步骤
+          _isConfirmationStep = true; // Enter confirmation code step
           _currentUsername = _usernameController.text.trim();
         });
       }
     } on AuthException catch (e) {
-      // 如果用户已存在但未确认
+      // If user already exists but is not confirmed
       if (e.message.contains('User already exists')) {
-        // 通过 resendSignUp 重发验证码
+        // Resend verification code via resendSignUp
         try {
           await Amplify.Auth.resendSignUpCode(
             username: _usernameController.text.trim(),
           );
           setState(() {
-            _isConfirmationStep = true; // 切换到验证码输入模式
+            _isConfirmationStep = true; // Switch to confirmation code mode
             _currentUsername = _usernameController.text.trim();
           });
-          _showError(context, '用户已存在，但未验证(将使用第一次注册时的密码)。已重新发送验证码');
+          _showError(context, 'User already exists but not verified (will use password from first registration). Verification code resent');
         } catch (resendError) {
-          _showError(context, '无法重新发送验证码: ${resendError.toString()}');
+          _showError(context, 'Unable to resend verification code: ${resendError.toString()}');
         }
       } else {
-        _showError(context, '注册失败: ${e.message}');
+        _showError(context, 'Registration failed: ${e.message}');
       }
     }
   }
@@ -73,14 +73,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
       );
       if (result.isSignUpComplete) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('注册成功')),
+          SnackBar(content: Text('Registration successful')),
         );
-        Navigator.pop(context); // 验证完成后返回登录页面
+        Navigator.pop(context); // Return to login page after verification
       } else {
-        _showError(context, '验证码验证失败');
+        _showError(context, 'Verification code validation failed');
       }
     } catch (e) {
-      _showError(context, '验证码验证失败: ${e.toString()}');
+      _showError(context, 'Verification code validation failed: ${e.toString()}');
     }
   }
 
@@ -95,7 +95,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       backgroundColor: Color(0xFFFFFFFF),
       appBar: AppBar(
-        title: Text('注册'),
+        title: Text('Register'),
         backgroundColor: Color(0xFF4FC3F7),
       ),
       body: Padding(
@@ -105,7 +105,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              _isConfirmationStep ? '输入验证码' : '创建新账户',
+              _isConfirmationStep ? 'Enter Verification Code' : 'Create New Account',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF4FC3F7),
@@ -115,11 +115,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
             ),
             SizedBox(height: 40),
             if (!_isConfirmationStep) ...[
-              // 用户名输入框
+              // Username input field
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
-                  labelText: '用户名',
+                  labelText: 'Username',
                   prefixIcon: Icon(Icons.person, color: Color(0xFF4FC3F7)),
                   filled: true,
                   fillColor: Color(0xFFF1F8E9),
@@ -129,11 +129,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
               SizedBox(height: 20),
-              // 邮箱输入框
+              // Email input field
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: '邮箱',
+                  labelText: 'Email',
                   prefixIcon: Icon(Icons.email, color: Color(0xFF4FC3F7)),
                   filled: true,
                   fillColor: Color(0xFFF1F8E9),
@@ -143,12 +143,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
               SizedBox(height: 20),
-              // 密码输入框
+              // Password input field
               TextField(
                 controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: '密码',
+                  labelText: 'Password',
                   prefixIcon: Icon(Icons.lock, color: Color(0xFF4FC3F7)),
                   filled: true,
                   fillColor: Color(0xFFF1F8E9),
@@ -158,12 +158,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
               SizedBox(height: 20),
-              // 确认密码输入框
+              // Confirm password input field
               TextField(
                 controller: _confirmPasswordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: '确认密码',
+                  labelText: 'Confirm Password',
                   prefixIcon:
                       Icon(Icons.lock_outline, color: Color(0xFF4FC3F7)),
                   filled: true,
@@ -174,7 +174,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
               SizedBox(height: 40),
-              // 注册按钮
+              // Register button
               ElevatedButton(
                 onPressed: () => _registerUser(context),
                 style: ElevatedButton.styleFrom(
@@ -185,16 +185,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 child: Text(
-                  '注册',
+                  'Register',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ] else ...[
-              // 验证码输入框
+              // Verification code input field
               TextField(
                 controller: _confirmationCodeController,
                 decoration: InputDecoration(
-                  labelText: '验证码',
+                  labelText: 'Verification Code',
                   prefixIcon:
                       Icon(Icons.confirmation_num, color: Color(0xFF4FC3F7)),
                   filled: true,
@@ -205,7 +205,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
               SizedBox(height: 20),
-              // 验证按钮
+              // Verify button
               ElevatedButton(
                 onPressed: () => _confirmSignUp(context),
                 style: ElevatedButton.styleFrom(
@@ -216,38 +216,38 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 child: Text(
-                  '验证',
+                  'Verify',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
               SizedBox(height: 20),
-              // 重新发送验证码按钮
+              // Resend verification code button
               TextButton(
                 onPressed: () async {
                   try {
                     await Amplify.Auth.resendSignUpCode(
                       username: _currentUsername,
                     );
-                    _showError(context, '验证码已重新发送');
+                    _showError(context, 'Verification code resent');
                   } catch (e) {
-                    _showError(context, '重新发送验证码失败: ${e.toString()}');
+                    _showError(context, 'Failed to resend verification code: ${e.toString()}');
                   }
                 },
                 child: Text(
-                  '重新发送验证码',
+                  'Resend verification code',
                   style: TextStyle(color: Color(0xFFFFA726), fontSize: 16),
                 ),
               ),
             ],
             SizedBox(height: 20),
-            // 返回登录按钮
+            // Return to login button
             if (!_isConfirmationStep)
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  '已经有账户？前往登录',
+                  'Already have an account? Login here',
                   style: TextStyle(
                     color: Color(0xFFFFA726),
                     fontSize: 16,
