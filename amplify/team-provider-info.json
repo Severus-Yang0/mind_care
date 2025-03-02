@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-mindcare-dev-154132-authRole",
+      "UnauthRoleArn": "arn:aws:iam::140192304289:role/amplify-mindcare-dev-154132-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::140192304289:role/amplify-mindcare-dev-154132-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-mindcare-dev-154132-deployment",
+      "UnauthRoleName": "amplify-mindcare-dev-154132-unauthRole",
+      "StackName": "amplify-mindcare-dev-154132",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:140192304289:stack/amplify-mindcare-dev-154132/93108f30-8936-11ef-ae65-06c8b19e1985",
+      "AmplifyAppId": "d18qt9glakktr9"
+    },
+    "categories": {
+      "auth": {
+        "mindcare45344309": {}
+      },
+      "api": {
+        "mindcare": {}
+      }
+    }
+  }
+}

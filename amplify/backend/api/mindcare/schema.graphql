@@ -1,0 +1,60 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+# 用户个人基础信息表
+type UserInformation 
+  @model 
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] }
+  ]) {
+  id: ID! @primaryKey
+  name: String
+  age: Int
+  gender: String
+  occupation: String
+  education: String
+  medicalHistory: String
+  updatedAt: AWSDateTime
+  createdAt: AWSDateTime
+}
+
+# 抑郁症评估问卷记录表
+type PHQ9Assessment 
+  @model 
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] }
+  ]) {
+  id: ID! @primaryKey
+  userId: String!
+  date: AWSDateTime!
+  q1: Int!  # 做事时提不起劲或没有兴趣
+  q2: Int!  # 感到心情低落、沮丧或绝望
+  q3: Int!  # 难以入睡、睡不安稳或睡眠过多
+  q4: Int!  # 感觉疲倦或没有活力
+  q5: Int!  # 胃口不好或吃太多
+  q6: Int!  # 觉得自己很差劲，或觉得自己很失败，或让自己或家人失望
+  q7: Int!  # 难以集中注意力做事，例如看报纸或看电视
+  q8: Int!  # 行动或说话速度变得缓慢，或变得坐立不安，动来动去
+  q9: Int!  # 想到自己最好死掉或者伤害自己
+  totalScore: Int!  # 总分
+  severity: String!  # 严重程度：minimal、mild、moderate、moderately severe、severe
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type DiaryEntry 
+  @model 
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] }
+  ]) {
+  id: ID! @primaryKey
+  userId: String!
+  date: AWSDateTime!
+  title: String
+  content: String!
+  mood: String  # 心情状态：开心、平静、焦虑、悲伤等
+  tags: [String]  # 标签列表
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
