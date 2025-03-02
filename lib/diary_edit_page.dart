@@ -4,7 +4,7 @@ import 'package:amplify_api/amplify_api.dart';
 import 'package:mind_care/models/DiaryEntry.dart';
 
 class DiaryEditPage extends StatefulWidget {
-  final DiaryEntry? entry; // 如果是编辑现有日记，则传入
+  final DiaryEntry? entry; // Pass in if editing an existing diary entry
 
   const DiaryEditPage({Key? key, this.entry}) : super(key: key);
 
@@ -19,7 +19,7 @@ class _DiaryEditPageState extends State<DiaryEditPage> {
   String? _selectedMood;
   bool _isSaving = false;
 
-  final List<String> _moods = ['开心', '平静', '焦虑', '悲伤'];
+  final List<String> _moods = ['Happy', 'Calm', 'Anxious', 'Sad'];
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ Future<void> _saveDiary() async {
         final now = DateTime.now();
         
         if (widget.entry != null) {
-          // 编辑现有日记
+          // Edit existing diary entry
           final updatedEntry = widget.entry!.copyWith(
             title: _titleController.text.trim(),
             content: _contentController.text.trim(),
@@ -58,10 +58,10 @@ Future<void> _saveDiary() async {
           final response = await Amplify.API.mutate(request: request).response;
 
           if (response.errors?.isNotEmpty ?? false) {
-            throw Exception('保存失败: ${response.errors}');
+            throw Exception('Save failed: ${response.errors}');
           }
         } else {
-          // 创建新日记
+          // Create new diary entry
           final newEntry = DiaryEntry(
             userId: user.userId,
             date: TemporalDateTime(now),
@@ -81,16 +81,15 @@ Future<void> _saveDiary() async {
           final response = await Amplify.API.mutate(request: request).response;
 
           if (response.errors?.isNotEmpty ?? false) {
-            throw Exception('保存失败: ${response.errors}');
+            throw Exception('Save failed: ${response.errors}');
           }
         }
 
-        Navigator.pop(context, true); // 返回并刷新列表
+        Navigator.pop(context, true); // Return and refresh the list
       } catch (e) {
-        print('Error saving diary: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('保存失败，请重试\n${e.toString()}'),
+            content: Text('Save failed, please try again'),
             duration: Duration(seconds: 5),
           ),
         );
@@ -106,7 +105,7 @@ Future<void> _saveDiary() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.entry == null ? '写日记' : '编辑日记'),
+        title: Text(widget.entry == null ? 'Write Diary' : 'Edit Diary'),
         backgroundColor: Color(0xFF4FC3F7),
         actions: [
           IconButton(
@@ -127,8 +126,8 @@ Future<void> _saveDiary() async {
                     TextFormField(
                       controller: _titleController,
                       decoration: InputDecoration(
-                        labelText: '标题',
-                        hintText: '给今天的日记起个标题吧（选填）',
+                        labelText: 'Title',
+                        hintText: 'Give today\'s diary a title (optional)',
                         filled: true,
                         fillColor: Color(0xFFF1F8E9),
                       ),
@@ -137,7 +136,7 @@ Future<void> _saveDiary() async {
                     DropdownButtonFormField<String>(
                       value: _selectedMood,
                       decoration: InputDecoration(
-                        labelText: '今天的心情',
+                        labelText: 'Today\'s Mood',
                         filled: true,
                         fillColor: Color(0xFFF1F8E9),
                       ),
@@ -157,8 +156,8 @@ Future<void> _saveDiary() async {
                     TextFormField(
                       controller: _contentController,
                       decoration: InputDecoration(
-                        labelText: '内容',
-                        hintText: '记录下此刻的想法...',
+                        labelText: 'Content',
+                        hintText: 'Write down your thoughts...',
                         filled: true,
                         fillColor: Color(0xFFF1F8E9),
                         alignLabelWithHint: true,
@@ -166,7 +165,7 @@ Future<void> _saveDiary() async {
                       maxLines: 10,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return '请输入日记内容';
+                          return 'Please enter diary content';
                         }
                         return null;
                       },

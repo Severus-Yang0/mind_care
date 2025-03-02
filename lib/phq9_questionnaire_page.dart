@@ -13,22 +13,22 @@ class _PHQ9QuestionnairePageState extends State<PHQ9QuestionnairePage> {
   bool _isSubmitting = false;
 
   final List<String> _questions = [
-    '做事时提不起劲或没有兴趣',
-    '感到心情低落、沮丧或绝望',
-    '难以入睡、睡不安稳或睡眠过多',
-    '感觉疲倦或没有活力',
-    '胃口不好或吃太多',
-    '觉得自己很差劲，或觉得自己很失败，或让自己或家人失望',
-    '难以集中注意力做事，例如看报纸或看电视',
-    '行动或说话速度变得缓慢，或变得坐立不安，动来动去',
-    '想到自己最好死掉或者伤害自己'
+    'Little interest or pleasure in doing things',
+    'Feeling down, depressed, or hopeless',
+    'Trouble falling or staying asleep, or sleeping too much',
+    'Feeling tired or having little energy',
+    'Poor appetite or overeating',
+    'Feeling bad about yourself or that you are a failure or have let yourself or your family down',
+    'Trouble concentrating on things, such as reading the newspaper or watching television',
+    'Moving or speaking so slowly that other people could have noticed, or being fidgety or restless',
+    'Thoughts that you would be better off dead, or of hurting yourself'
   ];
 
   final List<String> _options = [
-    '完全没有',
-    '有几天',
-    '一半以上时间',
-    '几乎每天'
+    'Not at all',
+    'Several days',
+    'More than half the days',
+    'Nearly every day'
   ];
 
   String _getSeverity(int totalScore) {
@@ -40,10 +40,10 @@ class _PHQ9QuestionnairePageState extends State<PHQ9QuestionnairePage> {
   }
 
   Future<void> _submitAssessment() async {
-    // 检查是否所有问题都已回答
+    // Check if all questions have been answered
     if (_answers.contains(-1)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('请回答所有问题')),
+        SnackBar(content: Text('Please answer all questions')),
       );
       return;
     }
@@ -82,20 +82,19 @@ class _PHQ9QuestionnairePageState extends State<PHQ9QuestionnairePage> {
       final response = await Amplify.API.mutate(request: request).response;
 
       if (response.errors?.isNotEmpty ?? false) {
-        throw Exception('保存失败: ${response.errors}');
+        throw Exception('Save failed: ${response.errors}');
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('问卷提交成功')),
+        SnackBar(content: Text('Questionnaire submitted successfully')),
       );
 
-      // 返回上一页
+      // Return to previous page
       Navigator.pop(context);
 
     } catch (e) {
-      print('Error submitting assessment: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('提交失败，请重试')),
+        SnackBar(content: Text('Submission failed, please try again')),
       );
     } finally {
       setState(() {
@@ -143,7 +142,7 @@ class _PHQ9QuestionnairePageState extends State<PHQ9QuestionnairePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('PHQ-9 抑郁症筛查量表'),
+        title: Text('PHQ-9 Depression Screening Scale'),
         backgroundColor: Color(0xFF4FC3F7),
       ),
       body: Stack(
@@ -154,7 +153,7 @@ class _PHQ9QuestionnairePageState extends State<PHQ9QuestionnairePage> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  '在过去的两周内，您经历以下情况的频率是？',
+                  'Over the last 2 weeks, how often have you been bothered by the following problems?',
                   style: TextStyle(fontSize: 16),
                 ),
               ),
@@ -170,7 +169,7 @@ class _PHQ9QuestionnairePageState extends State<PHQ9QuestionnairePage> {
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text(
-                    _isSubmitting ? '提交中...' : '提交问卷',
+                    _isSubmitting ? 'Submitting...' : 'Submit Questionnaire',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),

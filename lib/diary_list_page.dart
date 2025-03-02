@@ -14,47 +14,47 @@ class DiaryPage extends StatefulWidget {
 class _DiaryPageState extends State<DiaryPage> {
   List<DiaryEntry> _entries = [];
   bool _isLoading = true;
+  
   final _moodIcons = {
-    '开心': Icons.sentiment_very_satisfied,
-    '平静': Icons.sentiment_satisfied,
-    '焦虑': Icons.sentiment_neutral,
-    '悲伤': Icons.sentiment_dissatisfied,
+    'Happy': Icons.sentiment_very_satisfied,
+    'Calm': Icons.sentiment_satisfied,
+    'Anxious': Icons.sentiment_neutral,
+    'Sad': Icons.sentiment_dissatisfied,
   };
-
+  
   @override
   void initState() {
     super.initState();
     _loadEntries();
   }
-
+  
   Future<void> _loadEntries() async {
     try {
       setState(() {
         _isLoading = true;
       });
-
+      
       final user = await Amplify.Auth.getCurrentUser();
       final request = ModelQueries.list(
         DiaryEntry.classType,
         where: DiaryEntry.USERID.eq(user.userId),
         authorizationMode: APIAuthorizationType.userPools,
       );
-
+      
       final response = await Amplify.API.query(request: request).response;
       final entries = response.data?.items;
-
+      
       if (entries != null) {
         setState(() {
           _entries = entries
-              .whereType<DiaryEntry>()
-              .toList()
+            .whereType<DiaryEntry>()
+            .toList()
             ..sort((a, b) => b.date.toString().compareTo(a.date.toString()));
         });
       }
     } catch (e) {
-      print('Error loading diary entries: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('加载日记失败')),
+        SnackBar(content: Text('Failed to load diary entries')),
       );
     } finally {
       setState(() {
@@ -62,11 +62,11 @@ class _DiaryPageState extends State<DiaryPage> {
       });
     }
   }
-
+  
   Widget _buildEntryCard(DiaryEntry entry) {
     final date = DateTime.parse(entry.date.toString());
-    final dateFormat = DateFormat('yyyy年MM月dd日');
-
+    final dateFormat = DateFormat('MMM dd, yyyy');
+    
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: InkWell(
@@ -77,8 +77,7 @@ class _DiaryPageState extends State<DiaryPage> {
               builder: (context) => DiaryDetailPage(entry: entry),
             ),
           );
-          
-          // 如果返回 true，说明编辑或删除了日记，需要刷新列表
+          // If returning true, it means the entry was edited or deleted and the list needs to be refreshed
           if (result == true) {
             _loadEntries();
           }
@@ -128,7 +127,7 @@ class _DiaryPageState extends State<DiaryPage> {
       ),
     );
   }
-
+  
   Future<void> _navigateToCreateDiary() async {
     final result = await Navigator.push(
       context,
@@ -136,42 +135,41 @@ class _DiaryPageState extends State<DiaryPage> {
         builder: (context) => DiaryEditPage(),
       ),
     );
-    
-    // 如果返回值为 true，说明创建/编辑成功，需要刷新列表
+    // If returning true, it means creation/editing was successful and the list needs to be refreshed
     if (result == true) {
       _loadEntries();
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('我的日记'),
+        title: Text('My Diary'),
         backgroundColor: Color(0xFF4FC3F7),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadEntries,
-              child: _entries.isEmpty
-                  ? Center(
-                      child: Text(
-                        '暂无日记\n点击下方按钮开始写日记',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _entries.length,
-                      itemBuilder: (context, index) {
-                        return _buildEntryCard(_entries[index]);
-                      },
+        ? Center(child: CircularProgressIndicator())
+        : RefreshIndicator(
+            onRefresh: _loadEntries,
+            child: _entries.isEmpty
+              ? Center(
+                  child: Text(
+                    'No diary entries yet\nClick the button below to start writing',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
                     ),
-            ),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: _entries.length,
+                  itemBuilder: (context, index) {
+                    return _buildEntryCard(_entries[index]);
+                  },
+                ),
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToCreateDiary,
         child: Icon(Icons.add),

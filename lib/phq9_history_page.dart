@@ -28,7 +28,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
 
       final user = await Amplify.Auth.getCurrentUser();
       
-      // 创建查询请求，按日期降序排序
+      // Create query request, sorted by date in descending order
       final request = ModelQueries.list(
         PHQ9Assessment.classType,
         where: PHQ9Assessment.USERID.eq(user.userId),
@@ -38,24 +38,23 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
       final response = await Amplify.API.query(request: request).response;
 
       if (response.errors?.isNotEmpty ?? false) {
-        throw Exception('加载失败: ${response.errors}');
+        throw Exception('Loading failed: ${response.errors}');
       }
 
       final data = response.data?.items;
       if (data != null) {
-        // 转换为列表并按日期排序
+        // Convert to list and sort by date
         _assessments = data.whereType<PHQ9Assessment>().toList()
           ..sort((a, b) => b.date.toString().compareTo(a.date.toString()));
       }
 
     } catch (e) {
-      print('Error loading history: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('加载历史记录失败'),
+          content: Text('Failed to load history records'),
           duration: Duration(seconds: 5),
           action: SnackBarAction(
-            label: '重试',
+            label: 'Retry',
             onPressed: _loadHistory,
           ),
         ),
@@ -70,15 +69,15 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
   String _getSeverityText(String severity) {
     switch (severity) {
       case 'minimal':
-        return '无或轻微';
+        return 'Minimal';
       case 'mild':
-        return '轻度';
+        return 'Mild';
       case 'moderate':
-        return '中度';
+        return 'Moderate';
       case 'moderately severe':
-        return '中重度';
+        return 'Moderately Severe';
       case 'severe':
-        return '重度';
+        return 'Severe';
       default:
         return severity;
     }
@@ -102,7 +101,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
   }
 
   Widget _buildAssessmentCard(PHQ9Assessment assessment) {
-    final dateFormat = DateFormat('yyyy年MM月dd日 HH:mm');
+    final dateFormat = DateFormat('MMM dd, yyyy HH:mm');
     final date = DateTime.parse(assessment.date.toString());
     
     return Card(
@@ -144,7 +143,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
               ),
               SizedBox(height: 8),
               Text(
-                '总分: ${assessment.totalScore}分',
+                'Total score: ${assessment.totalScore} points',
                 style: TextStyle(fontSize: 16),
               ),
             ],
@@ -156,15 +155,15 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
 
   void _showAssessmentDetails(PHQ9Assessment assessment) {
     final questions = [
-      '做事时提不起劲或没有兴趣',
-      '感到心情低落、沮丧或绝望',
-      '难以入睡、睡不安稳或睡眠过多',
-      '感觉疲倦或没有活力',
-      '胃口不好或吃太多',
-      '觉得自己很差劲，或觉得自己很失败，或让自己或家人失望',
-      '难以集中注意力做事，例如看报纸或看电视',
-      '行动或说话速度变得缓慢，或变得坐立不安，动来动去',
-      '想到自己最好死掉或者伤害自己'
+      'Little interest or pleasure in doing things',
+      'Feeling down, depressed, or hopeless',
+      'Trouble falling or staying asleep, or sleeping too much',
+      'Feeling tired or having little energy',
+      'Poor appetite or overeating',
+      'Feeling bad about yourself or that you are a failure or have let yourself or your family down',
+      'Trouble concentrating on things, such as reading the newspaper or watching television',
+      'Moving or speaking so slowly that other people could have noticed, or being fidgety or restless',
+      'Thoughts that you would be better off dead, or of hurting yourself'
     ];
 
     final answers = [
@@ -179,7 +178,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
       assessment.q9,
     ];
 
-    final options = ['完全没有', '有几天', '一半以上时间', '几乎每天'];
+    final options = ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'];
 
     showModalBottomSheet(
       context: context,
@@ -211,7 +210,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
                   ),
                 ),
                 Text(
-                  '详细评估结果',
+                  'Detailed Assessment Results',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -231,7 +230,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
                     Padding(
                       padding: EdgeInsets.only(left: 16, top: 8, bottom: 16),
                       child: Text(
-                        '回答：${options[answers[index]]}',
+                        'Answer: ${options[answers[index]]}',
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
@@ -239,9 +238,9 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
                 )),
                 Divider(),
                 ListTile(
-                  title: Text('总分'),
+                  title: Text('Total Score'),
                   trailing: Text(
-                    '${assessment.totalScore}分',
+                    '${assessment.totalScore} points',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -249,7 +248,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
                   ),
                 ),
                 ListTile(
-                  title: Text('严重程度'),
+                  title: Text('Severity'),
                   trailing: Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
@@ -277,7 +276,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('评估历史记录'),
+        title: Text('Assessment History'),
         backgroundColor: Color(0xFF4FC3F7),
       ),
       body: _isLoading
@@ -288,7 +287,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '暂无评估记录',
+                        'No assessment records yet',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 16),
@@ -304,7 +303,7 @@ class _PHQ9HistoryPageState extends State<PHQ9HistoryPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF4FC3F7),
                         ),
-                        child: Text('开始评估'),
+                        child: Text('Start Assessment'),
                       ),
                     ],
                   ),

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class TestConstants {
-  static const int IMAGE_DISPLAY_DURATION = 3500; // 图片显示时间(毫秒)，调整为3.5秒
-  static const int INTERVAL_DURATION = 1500; // 间隔时间(毫秒)，保持1.5秒的注视点
-  static const double IMAGE_SIZE = 400.0; // 图片显示尺寸
+  static const int IMAGE_DISPLAY_DURATION = 3500; // Image display time (milliseconds), adjusted to 3.5 seconds
+  static const int INTERVAL_DURATION = 1500; // Interval time (milliseconds), keep 1.5 seconds for fixation point
+  static const double IMAGE_SIZE = 400.0; // Image display size
   
-  // 新增常量说明图片类型
-  static const String HIGH_VALENCE = "高效价";
-  static const String LOW_VALENCE = "低效价";
+  // New constants for image types
+  static const String HIGH_VALENCE = "High Valence";
+  static const String LOW_VALENCE = "Low Valence";
 }
 
 class ImageStimuliPage extends StatefulWidget {
@@ -23,10 +23,10 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
   Timer? _timer;
   int totalImagesShown = 0;
   
-  // 增加图片数量至60张，按我们筛选的交替模式排列
+  // Increase image count to 60, arranged in alternating pattern as filtered
   final List<String> imagePaths = List.generate(60, (index) => 'assets/images/oasis/${index + 1}.jpg');
   
-  // 定义图片类型信息，用于记录和显示
+  // Define image type information for recording and display
   final List<String> imageTypes = List.generate(60, (index) => 
     index % 2 == 0 ? TestConstants.HIGH_VALENCE : TestConstants.LOW_VALENCE
   );
@@ -52,7 +52,7 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
   void _startImageSequence() {
     if (!mounted) return;
     
-    // 开始第一个周期
+    // Start the first cycle
     _scheduleNextStep();
   }
 
@@ -60,39 +60,36 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
     if (!mounted) return;
 
     if (showCross) {
-      // 当前显示十字，准备显示下一张图片
+      // Currently showing cross, prepare to show next image
       _timer = Timer(Duration(milliseconds: TestConstants.INTERVAL_DURATION), () {
         if (!mounted) return;
         setState(() {
           currentImageIndex++;
           showCross = false;
-          // 调试信息更详细，显示图片类型
-          print('显示图片 ${currentImageIndex+1}/60: ${imageTypes[currentImageIndex]} 图片');
         });
         
         if (currentImageIndex < imagePaths.length) {
-          // 设置图片显示时间
+          // Set image display time
           _scheduleNextStep();
         } else {
-          // 所有图片都显示完毕
+          // All images have been displayed
           _endTest();
         }
       });
     } else {
-      // 当前显示图片，准备显示十字
+      // Currently showing image, prepare to show cross
       _timer = Timer(Duration(milliseconds: TestConstants.IMAGE_DISPLAY_DURATION), () {
         if (!mounted) return;
         setState(() {
           showCross = true;
           totalImagesShown++;
-          print('显示注视点 (已完成: $totalImagesShown/60)');
         });
         
         if (currentImageIndex < imagePaths.length - 1) {
-          // 还有更多图片要显示
+          // More images to display
           _scheduleNextStep();
         } else {
-          // 所有图片都显示完毕
+          // All images have been displayed
           _endTest();
         }
       });
@@ -108,7 +105,7 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
     _showTestCompleteDialog();
   }
 
-  // 添加中断测试的方法
+  // Method to interrupt the test
   void _stopTest() {
     if (!mounted) return;
     _timer?.cancel();
@@ -117,25 +114,25 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('确认中断测试'),
-          content: Text('您确定要中断当前测试吗？'),
+          title: Text('Confirm Test Interruption'),
+          content: Text('Are you sure you want to interrupt the current test?'),
           actions: <Widget>[
             TextButton(
-              child: Text('取消'),
+              child: Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
-                // 继续测试
+                // Continue the test
                 _scheduleNextStep();
               },
             ),
             TextButton(
-              child: Text('确认中断'),
+              child: Text('Confirm Interruption'),
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
                   isTestStarted = false;
                 });
-                // 显示中断测试的信息
+                // Show test interrupted information
                 _showTestInterruptedDialog();
               },
             ),
@@ -152,14 +149,14 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('测试已中断'),
-          content: Text('测试已被中断。已完成显示 $totalImagesShown 张图片，共 ${imagePaths.length} 张。'),
+          title: Text('Test Interrupted'),
+          content: Text('The test has been interrupted. Completed showing $totalImagesShown images out of ${imagePaths.length}.'),
           actions: <Widget>[
             TextButton(
-              child: Text('返回主页'),
+              child: Text('Return to Home'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop(); // 返回主页
+                Navigator.of(context).pop(); // Return to home page
               },
             ),
           ],
@@ -175,14 +172,14 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('测试完成'),
-          content: Text('60张图片刺激测试已完成。'),
+          title: Text('Test Complete'),
+          content: Text('60 image stimuli test has been completed.'),
           actions: <Widget>[
             TextButton(
-              child: Text('确定'),
+              child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop(); // 返回主页
+                Navigator.of(context).pop(); // Return to home page
               },
             ),
           ],
@@ -201,7 +198,7 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text('EEG图片刺激测试'),
+          title: Text('EEG Image Stimuli Test'),
           backgroundColor: Color(0xFF4FC3F7),
         ),
         body: Center(
@@ -213,7 +210,7 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
                   imagePaths: imagePaths,
                   totalImages: imagePaths.length,
                   progress: totalImagesShown,
-                  onStop: _stopTest, // 传递停止测试的回调
+                  onStop: _stopTest, // Pass the stop test callback
                 ),
         ),
       ),
@@ -234,14 +231,14 @@ class StartTestScreen extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(20.0),
           child: Text(
-            '测试说明：\n\n'
-            '1. 测试过程中将显示60张情绪图片\n'
-            '2. 如果感到不适，可以随时点击暂停按钮中断测试\n'
-            '3. 请保持注意力集中在屏幕中央\n'
-            '4. 测试期间请保持安静，尽量减少面部肌肉活动\n'
-            '5. 每张图片显示3.5秒钟\n'
-            '6. 图片之间会有1.5秒的注视点休息时间\n'
-            '7. 整个测试大约持续5分钟\n',
+            'Test Instructions:\n\n'
+            '1. 60 emotional images will be displayed during the test\n'
+            '2. If you feel uncomfortable, you can interrupt the test at any time by clicking the pause button\n'
+            '3. Please keep your attention focused on the center of the screen\n'
+            '4. Please remain quiet during the test and minimize facial muscle movements\n'
+            '5. Each image will be displayed for 3.5 seconds\n'
+            '6. There will be a 1.5 second fixation point rest time between images\n'
+            '7. The entire test will take approximately 5 minutes\n',
             style: TextStyle(fontSize: 18),
           ),
         ),
@@ -253,7 +250,7 @@ class StartTestScreen extends StatelessWidget {
           ),
           onPressed: onStart,
           child: Text(
-            '开始测试',
+            'Start Test',
             style: TextStyle(fontSize: 20),
           ),
         ),
@@ -268,7 +265,7 @@ class TestScreen extends StatelessWidget {
   final List<String> imagePaths;
   final int totalImages;
   final int progress;
-  final VoidCallback onStop; // 添加停止回调
+  final VoidCallback onStop; // Add stop callback
 
   const TestScreen({
     required this.showCross,
@@ -276,7 +273,7 @@ class TestScreen extends StatelessWidget {
     required this.imagePaths,
     required this.totalImages,
     required this.progress,
-    required this.onStop, // 接收停止回调
+    required this.onStop, // Receive stop callback
   });
 
   @override
@@ -301,16 +298,16 @@ class TestScreen extends StatelessWidget {
                     : Container(),
           ),
         ),
-        // 添加进度指示器
+        // Add progress indicator
         Positioned(
           bottom: 20,
           right: 20,
           child: Text(
-            '进度: $progress / $totalImages',
+            'Progress: $progress / $totalImages',
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ),
-        // 添加中断按钮
+        // Add interrupt button
         Positioned(
           top: 20,
           right: 20,
@@ -321,7 +318,7 @@ class TestScreen extends StatelessWidget {
             ),
             onPressed: onStop,
             child: Text(
-              '中断测试',
+              'Interrupt Test',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),

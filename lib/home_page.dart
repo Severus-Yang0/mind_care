@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           children: [
-            // Profile/Psychological Questionnaire
+            // Profile
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.person, size: 50, color: Color(0xFF4FC3F7)),
                     SizedBox(height: 10),
-                    Text('Profile/Questionnaire', style: TextStyle(fontSize: 18)),
+                    Text('Profile', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),

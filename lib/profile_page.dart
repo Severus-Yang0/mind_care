@@ -17,7 +17,6 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isEditing = false;
   final _formKey = GlobalKey<FormState>();
   UserInformation? _existingProfile;
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   String? _selectedGender;
@@ -39,9 +38,8 @@ class _ProfilePageState extends State<ProfilePage> {
       });
 
       final user = await Amplify.Auth.getCurrentUser();
-      print('Current user ID: ${user.userId}');
-
-      // 使用 ModelQueries 获取用户信息，并明确指定认证类型
+      
+      // Use ModelQueries to get user information with explicit authentication type
       final request = ModelQueries.get(
         UserInformation.classType,
         UserInformationModelIdentifier(id: user.userId),
@@ -49,13 +47,8 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
       final response = await Amplify.API.query(request: request).response;
-
-      // 打印响应以便调试
-      print('Query response: ${response.data}');
-      print('Query errors: ${response.errors}');
-
+      
       final userData = response.data;
-
       setState(() {
         if (userData != null) {
           _existingProfile = userData;
@@ -68,13 +61,12 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       });
     } catch (e) {
-      print('Error loading profile: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('加载个人信息失败: ${e.toString()}'),
+          content: Text('Failed to load profile information'),
           duration: Duration(seconds: 5),
           action: SnackBarAction(
-            label: '重试',
+            label: 'Retry',
             onPressed: _loadUserProfile,
           ),
         ),
@@ -90,12 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_formKey.currentState!.validate()) {
       try {
         final user = await Amplify.Auth.getCurrentUser();
-        print('Current user ID: ${user.userId}');
-
-        // 检查认证状态
-        final session = await Amplify.Auth.fetchAuthSession();
-        print('Is user signed in: ${session.isSignedIn}');
-
+        
         final profile = UserInformation(
           id: user.userId,
           name: _nameController.text.trim(),
@@ -111,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _existingProfile?.createdAt ?? TemporalDateTime(DateTime.now()),
         );
 
-        // 使用 ModelMutations 保存数据，并明确指定认证类型
+        // Use ModelMutations to save data with explicit authentication type
         final request = _existingProfile != null
             ? ModelMutations.update(profile,
                 authorizationMode: APIAuthorizationType.userPools)
@@ -120,19 +107,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
         final response = await Amplify.API.mutate(request: request).response;
 
-        // 检查是否有错误
+        // Check for errors
         if (response.errors?.isNotEmpty ?? false) {
-          print('Mutation errors: ${response.errors}');
-          throw Exception('保存失败: ${response.errors}');
+          throw Exception('Save failed: ${response.errors}');
         }
 
-        // 检查返回的数据
+        // Check returned data
         if (response.data == null) {
           throw Exception('No data returned from mutation');
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('个人信息已更新')),
+          SnackBar(content: Text('Profile information updated')),
         );
 
         setState(() {
@@ -140,17 +126,15 @@ class _ProfilePageState extends State<ProfilePage> {
           _existingProfile = profile;
         });
 
-        // 刷新数据
+        // Refresh data
         await _loadUserProfile();
-      } catch (e, stackTrace) {
-        print('Error saving profile: $e');
-        print('Stack trace: $stackTrace');
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('保存失败，请重试: ${e.toString()}'),
+            content: Text('Save failed, please try again'),
             duration: Duration(seconds: 5),
             action: SnackBarAction(
-              label: '重试',
+              label: 'Retry',
               onPressed: _saveProfile,
             ),
           ),
@@ -176,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           Expanded(
-            child: Text(value?.isNotEmpty == true ? value! : '暂未填写'),
+            child: Text(value?.isNotEmpty == true ? value! : 'Not filled yet'),
           ),
         ],
       ),
@@ -192,14 +176,14 @@ class _ProfilePageState extends State<ProfilePage> {
           TextFormField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: '姓名',
-              hintText: '暂未填写',
+              labelText: 'Name',
+              hintText: 'Not filled yet',
               filled: true,
               fillColor: Color(0xFFF1F8E9),
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return '请输入姓名';
+                return 'Please enter your name';
               }
               return null;
             },
@@ -208,8 +192,8 @@ class _ProfilePageState extends State<ProfilePage> {
           TextFormField(
             controller: _ageController,
             decoration: InputDecoration(
-              labelText: '年龄',
-              hintText: '暂未填写',
+              labelText: 'Age',
+              hintText: 'Not filled yet',
               filled: true,
               fillColor: Color(0xFFF1F8E9),
             ),
@@ -218,7 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
               if (value != null && value.isNotEmpty) {
                 final age = int.tryParse(value);
                 if (age == null || age < 0 || age > 120) {
-                  return '请输入有效年龄';
+                  return 'Please enter a valid age';
                 }
               }
               return null;
@@ -228,12 +212,12 @@ class _ProfilePageState extends State<ProfilePage> {
           DropdownButtonFormField<String>(
             value: _selectedGender,
             decoration: InputDecoration(
-              labelText: '性别',
-              hintText: '暂未填写',
+              labelText: 'Gender',
+              hintText: 'Not filled yet',
               filled: true,
               fillColor: Color(0xFFF1F8E9),
             ),
-            items: ['男', '女', '其他'].map((String value) {
+            items: ['Male', 'Female', 'Other'].map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -249,8 +233,8 @@ class _ProfilePageState extends State<ProfilePage> {
           TextFormField(
             controller: _occupationController,
             decoration: InputDecoration(
-              labelText: '职业',
-              hintText: '暂未填写',
+              labelText: 'Occupation',
+              hintText: 'Not filled yet',
               filled: true,
               fillColor: Color(0xFFF1F8E9),
             ),
@@ -259,8 +243,8 @@ class _ProfilePageState extends State<ProfilePage> {
           TextFormField(
             controller: _educationController,
             decoration: InputDecoration(
-              labelText: '教育程度',
-              hintText: '暂未填写',
+              labelText: 'Education Level',
+              hintText: 'Not filled yet',
               filled: true,
               fillColor: Color(0xFFF1F8E9),
             ),
@@ -269,8 +253,8 @@ class _ProfilePageState extends State<ProfilePage> {
           TextFormField(
             controller: _medicalHistoryController,
             decoration: InputDecoration(
-              labelText: '既往病史',
-              hintText: '暂未填写',
+              labelText: 'Medical History',
+              hintText: 'Not filled yet',
               filled: true,
               fillColor: Color(0xFFF1F8E9),
             ),
@@ -283,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: Color(0xFF4FC3F7),
               padding: EdgeInsets.symmetric(vertical: 16),
             ),
-            child: Text('保存信息', style: TextStyle(fontSize: 18)),
+            child: Text('Save Information', style: TextStyle(fontSize: 18)),
           ),
         ],
       ),
@@ -294,7 +278,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('个人信息'),
+        title: Text('Personal Information'),
         backgroundColor: Color(0xFF4FC3F7),
         actions: [
           IconButton(
@@ -315,12 +299,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (!_isEditing) ...[
-                    _buildInfoRow('姓名', _nameController.text),
-                    _buildInfoRow('年龄', _ageController.text),
-                    _buildInfoRow('性别', _selectedGender),
-                    _buildInfoRow('职业', _occupationController.text),
-                    _buildInfoRow('教育程度', _educationController.text),
-                    _buildInfoRow('既往病史', _medicalHistoryController.text),
+                    _buildInfoRow('Name', _nameController.text),
+                    _buildInfoRow('Age', _ageController.text),
+                    _buildInfoRow('Gender', _selectedGender),
+                    _buildInfoRow('Occupation', _occupationController.text),
+                    _buildInfoRow('Education', _educationController.text),
+                    _buildInfoRow('Medical History', _medicalHistoryController.text),
                     SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: () {
@@ -334,7 +318,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         backgroundColor: Color(0xFFFFA726),
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text('填写心理问卷', style: TextStyle(fontSize: 18)),
+                      child: Text('Complete Questionnaire', style: TextStyle(fontSize: 18)),
                     ),
                     SizedBox(height: 16),
                     ElevatedButton(
@@ -349,7 +333,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         backgroundColor: Color(0xFF90CAF9),
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text('查看历史问卷', style: TextStyle(fontSize: 18)),
+                      child: Text('View History', style: TextStyle(fontSize: 18)),
                     ),
                   ] else ...[
                     _buildEditForm(),

@@ -18,27 +18,27 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
   bool _isDeleting = false;
 
   final _moodIcons = {
-    '开心': Icons.sentiment_very_satisfied,
-    '平静': Icons.sentiment_satisfied,
-    '焦虑': Icons.sentiment_neutral,
-    '悲伤': Icons.sentiment_dissatisfied,
+    'Happy': Icons.sentiment_very_satisfied,
+    'Calm': Icons.sentiment_satisfied,
+    'Anxious': Icons.sentiment_neutral,
+    'Sad': Icons.sentiment_dissatisfied,
   };
 
   Future<void> _deleteDiary() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('确认删除'),
-        content: Text('确定要删除这篇日记吗？此操作不可撤销。'),
+        title: Text('Confirm Deletion'),
+        content: Text('Are you sure you want to delete this diary entry? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('取消'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              '删除',
+              'Delete',
               style: TextStyle(color: Colors.red),
             ),
           ),
@@ -60,15 +60,14 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
         final response = await Amplify.API.mutate(request: request).response;
 
         if (response.errors?.isNotEmpty ?? false) {
-          throw Exception('删除失败: ${response.errors}');
+          throw Exception('Delete failed: ${response.errors}');
         }
 
-        // 返回到列表页面，并传递需要刷新的信号
+        // Return to the list page with a signal to refresh
         Navigator.pop(context, true);
       } catch (e) {
-        print('Error deleting diary: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('删除失败，请重试')),
+          SnackBar(content: Text('Delete failed, please try again')),
         );
       } finally {
         setState(() {
@@ -87,7 +86,7 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
     );
 
     if (result == true) {
-      // 编辑成功，返回并刷新列表
+      // Edit successful, return and refresh the list
       Navigator.pop(context, true);
     }
   }
@@ -95,11 +94,11 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
   @override
   Widget build(BuildContext context) {
     final date = DateTime.parse(widget.entry.date.toString());
-    final dateFormat = DateFormat('yyyy年MM月dd日 HH:mm');
+    final dateFormat = DateFormat('MMM dd, yyyy HH:mm');
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('日记详情'),
+        title: Text('Diary Details'),
         backgroundColor: Color(0xFF4FC3F7),
         actions: [
           IconButton(
@@ -140,7 +139,7 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
                   if (widget.entry.mood != null) ...[
                     SizedBox(height: 8),
                     Text(
-                      '心情：${widget.entry.mood}',
+                      'Mood: ${widget.entry.mood}',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[800],

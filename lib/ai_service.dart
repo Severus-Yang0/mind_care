@@ -10,12 +10,14 @@ class AIService {
     required this.apiKey,
     required this.baseUrl,
   }) {
-    // 初始化时添加系统角色设定
+    // Initialize by adding system role setting
     _messageHistory.add({
       'role': 'system',
-      'content': '你是一位专业的心理医生，拥有丰富的心理咨询经验。你始终以同理心倾听用户的问题，'
-          '提供专业、温和且有建设性的建议。请用温暖、专业的语气与用户交流，帮助他们探索和解决心理困扰。'
-          '在对话中，要注意保护用户的隐私，并在必要时建议用户寻求线下专业心理医生的帮助。'
+      'content': 'You are a professional therapist with extensive experience in psychological counseling. '
+          'You always listen to users\' concerns with empathy, providing professional, gentle, and constructive advice. '
+          'Please communicate with users in a warm, professional tone to help them explore and resolve psychological issues. '
+          'During conversations, be mindful of protecting users\' privacy and suggest they seek offline professional '
+          'psychological help when necessary.'
     });
   }
 
@@ -26,7 +28,6 @@ class AIService {
     });
 
     final url = Uri.parse('$baseUrl/services/aigc/text-generation/generation');
-    
     final headers = {
       'Content-Type': 'application/json; charset=utf-8',
       'Authorization': 'Bearer $apiKey',
@@ -47,11 +48,9 @@ class AIService {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-
       if (response.statusCode == 200) {
         final decodedResponse = utf8.decode(response.bodyBytes);
         final jsonResponse = jsonDecode(decodedResponse);
-        
         final output = jsonResponse['output'];
         if (output != null && output['choices'] != null && output['choices'].isNotEmpty) {
           final assistantMessage = output['choices'][0]['message']['content'];

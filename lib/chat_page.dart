@@ -17,7 +17,7 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
-  // 创建 AIService 实例
+  // Create AIService instance
   final AIService _aiService = AIService(
     apiKey: Config.qwenApiKey,
     baseUrl: Config.qwenBaseUrl,
@@ -27,7 +27,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('专属心理医生'),
+        title: Text('Personal Therapist'),
         backgroundColor: Color(0xFF4FC3F7),
       ),
       body: Column(
@@ -76,17 +76,17 @@ class _ChatPageState extends State<ChatPage> {
               ),
               child: 
               MarkdownBody(
-  data: message.text,
-  styleSheet: MarkdownStyleSheet(
-    p: TextStyle(
-      color: isUserMessage ? Colors.white : Colors.black87,
-    ),
-    strong: TextStyle(
-      color: isUserMessage ? Colors.white : Colors.black87,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-)
+                data: message.text,
+                styleSheet: MarkdownStyleSheet(
+                  p: TextStyle(
+                    color: isUserMessage ? Colors.white : Colors.black87,
+                  ),
+                  strong: TextStyle(
+                    color: isUserMessage ? Colors.white : Colors.black87,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
             ),
           ),
           SizedBox(width: 8.0),
@@ -119,7 +119,7 @@ class _ChatPageState extends State<ChatPage> {
             child: TextField(
               controller: _textController,
               decoration: InputDecoration(
-                hintText: '输入消息...',
+                hintText: 'Type a message...',
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(16),
               ),
@@ -144,7 +144,7 @@ class _ChatPageState extends State<ChatPage> {
       _isLoading = true;
     });
 
-    // 滚动到底部
+    // Scroll to bottom
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
@@ -160,7 +160,7 @@ class _ChatPageState extends State<ChatPage> {
         _isLoading = false;
       });
 
-      // 再次滚动到底部以显示AI的回复
+      // Scroll to bottom again to show AI's response
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
@@ -173,18 +173,18 @@ class _ChatPageState extends State<ChatPage> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('发送消息失败，请重试')),
+        SnackBar(content: Text('Failed to send message, please try again')),
       );
     }
   }
 
   Future<String> _sendMessageToAI(String message) async {
     try {
-      // 使用 AIService 发送消息到 Qwen API
+      // Use AIService to send message to Qwen API
       final response = await _aiService.sendMessage(message);
       return response;
     } catch (e) {
-      throw Exception('与AI助手通信失败，请稍后再试');
+      throw Exception('Failed to communicate with AI assistant, please try again later');
     }
   }
 
