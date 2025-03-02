@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _userName = '用户';
+  String _userName = 'User';
   bool _isLoading = true;
 
   @override
@@ -45,15 +45,14 @@ class _HomePageState extends State<HomePage> {
         final userData = response.data as UserInformation;
         
         setState(() {
-          // 如果用户有设置姓名，则使用它；否则保持默认值"用户"
+          // If user has set a name, use it; otherwise keep the default value "User"
           if (userData.name != null && userData.name!.isNotEmpty) {
             _userName = userData.name!;
           }
         });
       }
     } catch (e) {
-      print('Error loading user profile: $e');
-      // 错误时保持默认欢迎信息
+      // Error handling - keep default welcome message
     } finally {
       setState(() {
         _isLoading = false;
@@ -66,14 +65,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: _isLoading 
-            ? Text('加载中...')
-            : Text('欢迎, $_userName!'),
+            ? Text('Loading...')
+            : Text('Welcome, $_userName!'),
         backgroundColor: Color(0xFF4FC3F7),
         actions: [
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              // 导航到设置页面
+              // Navigate to settings page
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SettingsPage()),
@@ -85,18 +84,18 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.count(
-          crossAxisCount: 2, // 两列的网格布局
+          crossAxisCount: 2, // Two-column grid layout
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
           children: [
-            // 资料填写/心理问卷
+            // Profile/Psychological Questionnaire
             GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfilePage()),
                 ).then((_) {
-                  // 当用户从个人资料页面返回时，重新加载用户信息
+                  // When user returns from profile page, reload user information
                   _loadUserProfile();
                 });
               },
@@ -111,12 +110,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.person, size: 50, color: Color(0xFF4FC3F7)),
                     SizedBox(height: 10),
-                    Text('资料填写/心理问卷', style: TextStyle(fontSize: 18)),
+                    Text('Profile/Questionnaire', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),
             ),
-            // 图片刺激测试
+            // Image Stimuli Test
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -135,12 +134,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.monitor, size: 50, color: Color(0xFF4FC3F7)),
                     SizedBox(height: 10),
-                    Text('图片刺激测试', style: TextStyle(fontSize: 18)),
+                    Text('Image Stimuli Test', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),
             ),
-            // 专属心理医生
+            // Personal Therapist
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -159,12 +158,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.psychology, size: 50, color: Color(0xFF4FC3F7)),
                     SizedBox(height: 10),
-                    Text('专属心理医生', style: TextStyle(fontSize: 18)),
+                    Text('Personal Therapist', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),
             ),
-            // 用户日记
+            // User Diary
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -183,12 +182,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.book, size: 50, color: Color(0xFF4FC3F7)),
                     SizedBox(height: 10),
-                    Text('用户日记', style: TextStyle(fontSize: 18)),
+                    Text('User Diary', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),
             ),
-            // 查看报告
+            // View Reports
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -207,12 +206,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.assessment, size: 50, color: Color(0xFF4FC3F7)),
                     SizedBox(height: 10),
-                    Text('查看报告', style: TextStyle(fontSize: 18)),
+                    Text('View Reports', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),
             ),
-            // 帮助与支持
+            // Help & Support
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -232,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                     Icon(Icons.help_outline,
                         size: 50, color: Color(0xFF4FC3F7)),
                     SizedBox(height: 10),
-                    Text('帮助与支持', style: TextStyle(fontSize: 18)),
+                    Text('Help & Support', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),

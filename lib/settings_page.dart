@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:mind_care/login_page.dart'; // 导入登录页面
+import 'package:mind_care/login_page.dart'; // Import login page
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -13,79 +13,79 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('设置'),
+        title: Text('Settings'),
         backgroundColor: Color(0xFF4FC3F7),
       ),
       body: ListView(
         children: [
-          // 账户安全部分
-          _buildSectionTitle('账户安全'),
+          // Account Security section
+          _buildSectionTitle('Account Security'),
           _buildSettingItem(
-            title: '修改密码',
+            title: 'Change Password',
             icon: Icons.lock_outline,
             onTap: () {
               _showChangePasswordDialog(context);
             },
           ),
           
-          // 数据管理部分
-          _buildSectionTitle('数据管理'),
+          // Data Management section
+          _buildSectionTitle('Data Management'),
           _buildSettingItem(
-            title: '导出数据',
+            title: 'Export Data',
             icon: Icons.download_outlined,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('此功能暂未开放')),
+                SnackBar(content: Text('This feature is not available yet')),
               );
             },
           ),
           _buildSettingItem(
-            title: '清除本地缓存',
+            title: 'Clear Local Cache',
             icon: Icons.cleaning_services_outlined,
             onTap: () {
               _showClearCacheConfirmation(context);
             },
           ),
           
-          // 应用设置部分
-          _buildSectionTitle('应用设置'),
+          // App Settings section
+          _buildSectionTitle('App Settings'),
           _buildSettingItem(
-            title: '通知设置',
+            title: 'Notification Settings',
             icon: Icons.notifications_outlined,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('此功能暂未开放')),
+                SnackBar(content: Text('This feature is not available yet')),
               );
             },
           ),
           _buildSettingItem(
-            title: '主题设置',
+            title: 'Theme Settings',
             icon: Icons.color_lens_outlined,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('此功能暂未开放')),
+                SnackBar(content: Text('This feature is not available yet')),
               );
             },
           ),
           
-          // 关于
-          _buildSectionTitle('关于'),
+          // About section
+          _buildSectionTitle('About'),
           _buildSettingItem(
-            title: '应用版本',
+            title: 'App Version',
             icon: Icons.info_outline,
             trailing: Text('1.0.0', style: TextStyle(color: Colors.grey[600])),
           ),
           _buildSettingItem(
-            title: '意见反馈',
+            title: 'Feedback',
             icon: Icons.feedback_outlined,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('此功能暂未开放')),
+                SnackBar(content: Text('This feature is not available yet')),
               );
             },
           ),
           
-          // 退出登录
+          // Logout
           SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -96,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 foregroundColor: Colors.red[800],
                 padding: EdgeInsets.symmetric(vertical: 16),
               ),
-              child: Text('退出登录'),
+              child: Text('Logout'),
             ),
           ),
           SizedBox(height: 20),
@@ -147,7 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('修改密码'),
+              title: Text('Change Password'),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -155,8 +155,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     TextField(
                       controller: _currentPasswordController,
                       decoration: InputDecoration(
-                        labelText: '当前密码',
-                        hintText: '请输入当前密码',
+                        labelText: 'Current Password',
+                        hintText: 'Enter current password',
                         errorText: _errorMessage,
                       ),
                       obscureText: true,
@@ -165,8 +165,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     TextField(
                       controller: _newPasswordController,
                       decoration: InputDecoration(
-                        labelText: '新密码',
-                        hintText: '请输入新密码',
+                        labelText: 'New Password',
+                        hintText: 'Enter new password',
                       ),
                       obscureText: true,
                     ),
@@ -174,8 +174,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     TextField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
-                        labelText: '确认新密码',
-                        hintText: '请再次输入新密码',
+                        labelText: 'Confirm New Password',
+                        hintText: 'Re-enter new password',
                       ),
                       obscureText: true,
                     ),
@@ -193,18 +193,18 @@ class _SettingsPageState extends State<SettingsPage> {
                       : () {
                           Navigator.of(context).pop();
                         },
-                  child: Text('取消'),
+                  child: Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: _isLoading
                       ? null
                       : () async {
-                          // 验证输入
+                          // Validate input
                           if (_currentPasswordController.text.isEmpty ||
                               _newPasswordController.text.isEmpty ||
                               _confirmPasswordController.text.isEmpty) {
                             setState(() {
-                              _errorMessage = '请填写所有密码字段';
+                              _errorMessage = 'Please fill in all password fields';
                             });
                             return;
                           }
@@ -212,63 +212,63 @@ class _SettingsPageState extends State<SettingsPage> {
                           if (_newPasswordController.text !=
                               _confirmPasswordController.text) {
                             setState(() {
-                              _errorMessage = '两次输入的新密码不一致';
+                              _errorMessage = 'New passwords do not match';
                             });
                             return;
                           }
 
-                          // 验证新密码是否符合规则
+                          // Validate if new password meets requirements
                           if (_newPasswordController.text.length < 8) {
                             setState(() {
-                              _errorMessage = '新密码长度至少为8位';
+                              _errorMessage = 'New password must be at least 8 characters';
                             });
                             return;
                           }
 
-                          // 设置加载状态
+                          // Set loading state
                           setState(() {
                             _isLoading = true;
                             _errorMessage = null;
                           });
 
                           try {
-                            // 调用 Amplify 修改密码
+                            // Call Amplify to change password
                             await Amplify.Auth.updatePassword(
                               oldPassword: _currentPasswordController.text,
                               newPassword: _newPasswordController.text,
                             );
 
-                            // 关闭对话框
+                            // Close dialog
                             Navigator.of(context).pop();
 
-                            // 显示成功消息
+                            // Show success message
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('密码修改成功'),
+                                content: Text('Password changed successfully'),
                                 backgroundColor: Colors.green,
                               ),
                             );
                           } on AuthException catch (e) {
-                            // 处理认证错误
+                            // Handle authentication errors
                             setState(() {
                               _isLoading = false;
                               switch (e.message) {
                                 case 'Incorrect username or password.':
-                                  _errorMessage = '当前密码错误';
+                                  _errorMessage = 'Current password is incorrect';
                                   break;
                                 default:
-                                  _errorMessage = '密码修改失败: ${e.message}';
+                                  _errorMessage = 'Password change failed: ${e.message}';
                               }
                             });
                           } catch (e) {
-                            // 处理其他错误
+                            // Handle other errors
                             setState(() {
                               _isLoading = false;
-                              _errorMessage = '发生错误: $e';
+                              _errorMessage = 'An error occurred: $e';
                             });
                           }
                         },
-                  child: Text('确认修改'),
+                  child: Text('Confirm Change'),
                 ),
               ],
             );
@@ -282,65 +282,65 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('清除缓存'),
-        content: Text('确定要清除应用缓存吗？这不会删除您的账户数据。'),
+        title: Text('Clear Cache'),
+        content: Text('Are you sure you want to clear the app cache? This will not delete your account data.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('取消'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('缓存已清除')),
+                SnackBar(content: Text('Cache cleared')),
               );
             },
-            child: Text('确定'),
+            child: Text('Confirm'),
           ),
         ],
       ),
     );
   }
 
-  // 正确的退出登录方法，确保返回到登录页面
+  // Correct sign out method, ensuring return to login page
   void _signOut(BuildContext context) async {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text('退出登录'),
-        content: Text('确定要退出登录吗？'),
+        title: Text('Logout'),
+        content: Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text('取消'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () async {
-              // 先关闭对话框
+              // Close dialog first
               Navigator.of(dialogContext).pop();
               
               try {
-                // 执行退出登录
+                // Execute sign out
                 await Amplify.Auth.signOut();
                 
-                // 登出成功后，直接导航到登录页面并清除所有之前的路由
+                // After successful logout, navigate to login page and clear all previous routes
                 if (context.mounted) {
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => LoginPage()),
-                    (route) => false, // 清除所有之前的路由
+                    (route) => false, // Clear all previous routes
                   );
                 }
               } catch (e) {
-                // 只有在登出失败时才显示SnackBar
+                // Only show SnackBar if logout fails
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('退出登录失败: $e')),
+                    SnackBar(content: Text('Logout failed: $e')),
                   );
                 }
               }
             },
-            child: Text('确定'),
+            child: Text('Confirm'),
           ),
         ],
       ),
