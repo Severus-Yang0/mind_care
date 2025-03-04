@@ -2,7 +2,6 @@
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
 input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
 
-# 用户个人基础信息表
 type UserInformation 
   @model 
   @auth(rules: [
@@ -19,7 +18,6 @@ type UserInformation
   createdAt: AWSDateTime
 }
 
-# 抑郁症评估问卷记录表
 type PHQ9Assessment 
   @model 
   @auth(rules: [
@@ -53,8 +51,15 @@ type DiaryEntry
   date: AWSDateTime!
   title: String
   content: String!
-  mood: String  # 心情状态：开心、平静、焦虑、悲伤等
-  tags: [String]  # 标签列表
+  mood: String
+  tags: [String]
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+}
+
+type StimuliTestRecord @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  userId: String!
+  startTime: AWSDateTime!
+  endTime: AWSDateTime!
 }

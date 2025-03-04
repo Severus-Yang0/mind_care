@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_api/amplify_api.dart';
+import 'models/StimuliTestRecord.dart';
 
 class TestConstants {
   static const int IMAGE_DISPLAY_DURATION = 3500; // Image display time (milliseconds), adjusted to 3.5 seconds
@@ -22,6 +25,8 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
   bool showCross = true;
   Timer? _timer;
   int totalImagesShown = 0;
+  DateTime? _startTime; // 记录测试开始时间
+  bool _isSubmitting = false; // 添加提交状态标志
   
   // Increase image count to 60, arranged in alternating pattern as filtered
   final List<String> imagePaths = List.generate(60, (index) => 'assets/images/oasis/${index + 1}.jpg');
@@ -39,6 +44,10 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
 
   void startTest() {
     if (!mounted) return;
+    
+    // 记录测试开始时间
+    _startTime = DateTime.now();
+    
     setState(() {
       isTestStarted = true;
       currentImageIndex = -1;
@@ -102,7 +111,52 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       isTestStarted = false;
     });
     _timer?.cancel();
-    _showTestCompleteDialog();
+    
+    // 测试正常完成，保存测试记录
+    _saveTestRecord();
+  }
+  
+  // 保存测试记录到DynamoDB
+  Future<void> _saveTestRecord() async {
+    if (_startTime == null) return; // 确保有开始时间
+    
+    setState(() {
+      _isSubmitting = true;
+    });
+    
+    try {
+      final user = await Amplify.Auth.getCurrentUser();
+      final endTime = DateTime.now();
+      
+      final testRecord = StimuliTestRecord(
+        userId: user.userId,
+        startTime: TemporalDateTime(_startTime!),
+        endTime: TemporalDateTime(endTime),
+      );
+      
+      final request = ModelMutations.create(
+        testRecord,
+        authorizationMode: APIAuthorizationType.userPools,
+      );
+      
+      final response = await Amplify.API.mutate(request: request).response;
+      
+      if (response.errors?.isNotEmpty ?? false) {
+        throw Exception('Save failed: ${response.errors}');
+      }
+      
+      // 测试记录保存成功后显示测试完成对话框
+      _showTestCompleteDialog();
+      
+    } catch (e) {
+      print('Error saving test record: $e');
+      // 即使保存失败，也显示测试完成对话框
+      _showTestCompleteDialog();
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
   }
 
   // Method to interrupt the test
@@ -132,7 +186,8 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
                 setState(() {
                   isTestStarted = false;
                 });
-                // Show test interrupted information
+                // 如果中断测试，不保存测试记录
+                // 直接显示测试中断对话框
                 _showTestInterruptedDialog();
               },
             ),
@@ -201,17 +256,29 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
           title: Text('EEG Image Stimuli Test'),
           backgroundColor: Color(0xFF4FC3F7),
         ),
-        body: Center(
-          child: !isTestStarted
-              ? StartTestScreen(onStart: startTest)
-              : TestScreen(
-                  showCross: showCross,
-                  currentImageIndex: currentImageIndex,
-                  imagePaths: imagePaths,
-                  totalImages: imagePaths.length,
-                  progress: totalImagesShown,
-                  onStop: _stopTest, // Pass the stop test callback
+        body: Stack(
+          children: [
+            Center(
+              child: !isTestStarted
+                  ? StartTestScreen(onStart: startTest)
+                  : TestScreen(
+                      showCross: showCross,
+                      currentImageIndex: currentImageIndex,
+                      imagePaths: imagePaths,
+                      totalImages: imagePaths.length,
+                      progress: totalImagesShown,
+                      onStop: _stopTest, // Pass the stop test callback
+                    ),
+            ),
+            // 添加提交状态指示器
+            if (_isSubmitting)
+              Container(
+                color: Colors.black.withOpacity(0.3),
+                child: Center(
+                  child: CircularProgressIndicator(),
                 ),
+              ),
+          ],
         ),
       ),
     );

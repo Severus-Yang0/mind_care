@@ -22,17 +22,19 @@
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'DiaryEntry.dart';
 import 'PHQ9Assessment.dart';
+import 'StimuliTestRecord.dart';
 import 'UserInformation.dart';
 
 export 'DiaryEntry.dart';
 export 'PHQ9Assessment.dart';
+export 'StimuliTestRecord.dart';
 export 'UserInformation.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "7ee8bb8a3959a791469ddf2b2fa7e4d2";
+  String version = "72959deb42c6550bd1605f4f0d23708d";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [DiaryEntry.schema, PHQ9Assessment.schema, UserInformation.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [DiaryEntry.schema, PHQ9Assessment.schema, StimuliTestRecord.schema, UserInformation.schema];
   @override
   List<amplify_core.ModelSchema> customTypeSchemas = [];
   static final ModelProvider _instance = ModelProvider();
@@ -45,6 +47,8 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return DiaryEntry.classType;
       case "PHQ9Assessment":
         return PHQ9Assessment.classType;
+      case "StimuliTestRecord":
+        return StimuliTestRecord.classType;
       case "UserInformation":
         return UserInformation.classType;
       default:
