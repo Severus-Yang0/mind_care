@@ -100,7 +100,6 @@ class _ReportPageState extends State<ReportPage>
     for (int i = 0; i < _assessments.length; i++) {
       final assessment = _assessments[i];
       final date = DateTime.parse(assessment.date.toString());
-      // Convert date to position on x-axis (relative position in days)
       final double x = date.difference(_firstAssessmentDate!).inDays.toDouble();
       final double y = assessment.totalScore.toDouble();
       _scoreSpots.add(FlSpot(x, y));
@@ -445,6 +444,7 @@ class _ReportPageState extends State<ReportPage>
     );
   }
 
+// Add this helper method to your _ReportPageState class
   Widget _buildTrendsTab() {
     if (_assessments.isEmpty) {
       return Center(
@@ -458,13 +458,16 @@ class _ReportPageState extends State<ReportPage>
             'At least three assessments are needed to display a trend chart, please continue completing PHQ-9 questionnaires'),
       );
     }
+
     // Ensure assessments are sorted by date (from early to late)
     final sortedAssessments = List<PHQ9Assessment>.from(_assessments)
       ..sort((a, b) => DateTime.parse(a.date.toString())
           .compareTo(DateTime.parse(b.date.toString())));
+
     // Prepare chart data points
     final spots = <FlSpot>[];
     final dates = <DateTime>[];
+
     for (int i = 0; i < sortedAssessments.length; i++) {
       final assessment = sortedAssessments[i];
       final date = DateTime.parse(assessment.date.toString());
@@ -474,9 +477,23 @@ class _ReportPageState extends State<ReportPage>
       final double y = assessment.totalScore.toDouble();
       spots.add(FlSpot(x, y));
     }
-    // Date formatters
-    final shortDateFormat = DateFormat('MM/dd');
+
+    // Calculate appropriate date format and label interval based on data span
+    final daysBetween =
+        dates.isEmpty ? 0 : dates.last.difference(dates.first).inDays;
+    final DateFormat dateFormat;
+
+    if (daysBetween > 365) {
+      dateFormat = DateFormat('MMM yy'); // Feb 22
+    } else if (daysBetween > 60) {
+      dateFormat = DateFormat('d MMM'); // 15 Feb
+    } else {
+      dateFormat = DateFormat('MM/dd'); // 02/15
+    }
+
+    // Full date format for detailed view
     final fullDateFormat = DateFormat('MMM dd, yyyy');
+
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -508,24 +525,35 @@ class _ReportPageState extends State<ReportPage>
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 30,
+                      reservedSize: 35, // Increased for rotated text
                       getTitlesWidget: (value, meta) {
-                        // Ensure only dates corresponding to data points are displayed
+                        // Calculate how many labels to show based on data points
+                        final interval = _calculateLabelInterval(dates.length);
                         final index = value.toInt();
-                        if (index >= 0 && index < dates.length) {
+
+                        if (index >= 0 &&
+                            index < dates.length &&
+                            (index % interval == 0 ||
+                                index == dates.length - 1)) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              shortDateFormat.format(dates[index]),
-                              style: TextStyle(
-                                color: Colors.grey[800],
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                            child: Transform.rotate(
+                              angle: -45 *
+                                  (3.1415926 / 180), // 45 degrees in radians
+                              alignment: Alignment.center,
+                              child: Text(
+                                dateFormat.format(dates[index]),
+                                style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10, // Smaller text for better fit
+                                ),
                               ),
                             ),
                           );
                         }
-                        return Text('');
+                        return const SizedBox
+                            .shrink(); // Empty widget, better than Text('')
                       },
                     ),
                   ),
@@ -544,7 +572,7 @@ class _ReportPageState extends State<ReportPage>
                             ),
                           );
                         }
-                        return Text('');
+                        return const SizedBox.shrink();
                       },
                     ),
                   ),
@@ -639,6 +667,16 @@ class _ReportPageState extends State<ReportPage>
         ],
       ),
     );
+  }
+
+// Helper method to determine optimal label interval based on data size
+  int _calculateLabelInterval(int dataSize) {
+    if (dataSize <= 5) return 1;
+    if (dataSize <= 10) return 2;
+    if (dataSize <= 20) return 3;
+    if (dataSize <= 30) return 5;
+    if (dataSize <= 50) return 8;
+    return dataSize ~/ 6; // Show approximately 6 labels regardless of size
   }
 
   Widget _buildSeverityLegend() {

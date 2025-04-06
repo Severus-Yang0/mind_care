@@ -38,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
       });
 
       final user = await Amplify.Auth.getCurrentUser();
-      
+
       // Use ModelQueries to get user information with explicit authentication type
       final request = ModelQueries.get(
         UserInformation.classType,
@@ -47,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
       final response = await Amplify.API.query(request: request).response;
-      
+
       final userData = response.data;
       setState(() {
         if (userData != null) {
@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_formKey.currentState!.validate()) {
       try {
         final user = await Amplify.Auth.getCurrentUser();
-        
+
         final profile = UserInformation(
           id: user.userId,
           name: _nameController.text.trim(),
@@ -304,7 +304,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     _buildInfoRow('Gender', _selectedGender),
                     _buildInfoRow('Occupation', _occupationController.text),
                     _buildInfoRow('Education', _educationController.text),
-                    _buildInfoRow('Medical History', _medicalHistoryController.text),
+                    _buildInfoRow(
+                        'Medical History', _medicalHistoryController.text),
                     SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: () {
@@ -315,10 +316,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFA726),
+                        backgroundColor: Color(0xFFFFD54F),
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text('Complete Questionnaire', style: TextStyle(fontSize: 18)),
+                      child: Text('Complete Questionnaire',
+                          style: TextStyle(fontSize: 18)),
                     ),
                     SizedBox(height: 16),
                     ElevatedButton(
@@ -333,7 +335,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         backgroundColor: Color(0xFF90CAF9),
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text('View History', style: TextStyle(fontSize: 18)),
+                      child:
+                          Text('View History', style: TextStyle(fontSize: 18)),
                     ),
                   ] else ...[
                     _buildEditForm(),

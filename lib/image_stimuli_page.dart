@@ -5,9 +5,9 @@ import 'package:amplify_api/amplify_api.dart';
 import 'models/StimuliTestRecord.dart';
 
 class TestConstants {
-  static const int IMAGE_DISPLAY_DURATION = 3500; // Image display time (milliseconds), adjusted to 3.5 seconds
-  static const int INTERVAL_DURATION = 1500; // Interval time (milliseconds), keep 1.5 seconds for fixation point
-  static const double IMAGE_SIZE = 400.0; // Image display size
+  static const int IMAGE_DISPLAY_DURATION = 3500;
+  static const int INTERVAL_DURATION = 1500; 
+  static const double IMAGE_SIZE = 400.0;
   
   // New constants for image types
   static const String HIGH_VALENCE = "High Valence";
@@ -45,7 +45,6 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
   void startTest() {
     if (!mounted) return;
     
-    // 记录测试开始时间
     _startTime = DateTime.now();
     
     setState(() {
@@ -111,14 +110,11 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       isTestStarted = false;
     });
     _timer?.cancel();
-    
-    // 测试正常完成，保存测试记录
     _saveTestRecord();
   }
   
-  // 保存测试记录到DynamoDB
   Future<void> _saveTestRecord() async {
-    if (_startTime == null) return; // 确保有开始时间
+    if (_startTime == null) return;
     
     setState(() {
       _isSubmitting = true;
@@ -144,13 +140,10 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       if (response.errors?.isNotEmpty ?? false) {
         throw Exception('Save failed: ${response.errors}');
       }
-      
-      // 测试记录保存成功后显示测试完成对话框
       _showTestCompleteDialog();
       
     } catch (e) {
       print('Error saving test record: $e');
-      // 即使保存失败，也显示测试完成对话框
       _showTestCompleteDialog();
     } finally {
       setState(() {
@@ -186,8 +179,6 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
                 setState(() {
                   isTestStarted = false;
                 });
-                // 如果中断测试，不保存测试记录
-                // 直接显示测试中断对话框
                 _showTestInterruptedDialog();
               },
             ),
@@ -270,7 +261,6 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
                       onStop: _stopTest, // Pass the stop test callback
                     ),
             ),
-            // 添加提交状态指示器
             if (_isSubmitting)
               Container(
                 color: Colors.black.withOpacity(0.3),

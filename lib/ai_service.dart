@@ -10,12 +10,15 @@ class AIService {
     required this.apiKey,
     required this.baseUrl,
   }) {
-    // Initialize by adding system role setting
+    // Initialize by adding system role setting with enhanced prompt
     _messageHistory.add({
       'role': 'system',
       'content': 'You are a professional therapist with extensive experience in psychological counseling. '
           'You always listen to users\' concerns with empathy, providing professional, gentle, and constructive advice. '
           'Please communicate with users in a warm, professional tone to help them explore and resolve psychological issues. '
+          'When a user shares a diary entry with you, analyze it carefully and provide thoughtful insights. '
+          'Pay attention to the user\'s mood, emotional patterns, and key events mentioned in their diary. '
+          'Your goal is to help them gain deeper self-awareness and provide supportive guidance based on their personal experiences. '
           'During conversations, be mindful of protecting users\' privacy and suggest they seek offline professional '
           'psychological help when necessary.'
     });
@@ -67,5 +70,11 @@ class AIService {
     } catch (e) {
       throw Exception('Failed to send message');
     }
+  }
+  
+  void resetConversation() {
+    final systemPrompt = _messageHistory.first;
+    _messageHistory.clear();
+    _messageHistory.add(systemPrompt);
   }
 }
