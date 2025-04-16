@@ -316,11 +316,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFD54F),
+                        backgroundColor: Color.fromARGB(255, 255, 217, 92),
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                       child: Text('Complete Questionnaire',
-                          style: TextStyle(fontSize: 18)),
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 19, 54, 115))),
                     ),
                     SizedBox(height: 16),
                     ElevatedButton(
@@ -335,8 +337,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         backgroundColor: Color(0xFF90CAF9),
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child:
-                          Text('View History', style: TextStyle(fontSize: 18)),
+                      child: Text('View History',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 19, 54, 115))),
                     ),
                   ] else ...[
                     _buildEditForm(),

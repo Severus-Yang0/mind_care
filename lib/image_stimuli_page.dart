@@ -6,9 +6,9 @@ import 'models/StimuliTestRecord.dart';
 
 class TestConstants {
   static const int IMAGE_DISPLAY_DURATION = 3500;
-  static const int INTERVAL_DURATION = 1500; 
+  static const int INTERVAL_DURATION = 1500;
   static const double IMAGE_SIZE = 400.0;
-  
+
   // New constants for image types
   static const String HIGH_VALENCE = "High Valence";
   static const String LOW_VALENCE = "Low Valence";
@@ -27,14 +27,17 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
   int totalImagesShown = 0;
   DateTime? _startTime; // 记录测试开始时间
   bool _isSubmitting = false; // 添加提交状态标志
-  
+
   // Increase image count to 60, arranged in alternating pattern as filtered
-  final List<String> imagePaths = List.generate(60, (index) => 'assets/images/oasis/${index + 1}.jpg');
-  
+  final List<String> imagePaths =
+      List.generate(60, (index) => 'assets/images/oasis/${index + 1}.jpg');
+
   // Define image type information for recording and display
-  final List<String> imageTypes = List.generate(60, (index) => 
-    index % 2 == 0 ? TestConstants.HIGH_VALENCE : TestConstants.LOW_VALENCE
-  );
+  final List<String> imageTypes = List.generate(
+      60,
+      (index) => index % 2 == 0
+          ? TestConstants.HIGH_VALENCE
+          : TestConstants.LOW_VALENCE);
 
   @override
   void dispose() {
@@ -44,22 +47,22 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
 
   void startTest() {
     if (!mounted) return;
-    
+
     _startTime = DateTime.now();
-    
+
     setState(() {
       isTestStarted = true;
       currentImageIndex = -1;
       showCross = true;
       totalImagesShown = 0;
     });
-    
+
     _startImageSequence();
   }
 
   void _startImageSequence() {
     if (!mounted) return;
-    
+
     // Start the first cycle
     _scheduleNextStep();
   }
@@ -69,13 +72,14 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
 
     if (showCross) {
       // Currently showing cross, prepare to show next image
-      _timer = Timer(Duration(milliseconds: TestConstants.INTERVAL_DURATION), () {
+      _timer =
+          Timer(Duration(milliseconds: TestConstants.INTERVAL_DURATION), () {
         if (!mounted) return;
         setState(() {
           currentImageIndex++;
           showCross = false;
         });
-        
+
         if (currentImageIndex < imagePaths.length) {
           // Set image display time
           _scheduleNextStep();
@@ -86,13 +90,14 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       });
     } else {
       // Currently showing image, prepare to show cross
-      _timer = Timer(Duration(milliseconds: TestConstants.IMAGE_DISPLAY_DURATION), () {
+      _timer = Timer(
+          Duration(milliseconds: TestConstants.IMAGE_DISPLAY_DURATION), () {
         if (!mounted) return;
         setState(() {
           showCross = true;
           totalImagesShown++;
         });
-        
+
         if (currentImageIndex < imagePaths.length - 1) {
           // More images to display
           _scheduleNextStep();
@@ -112,36 +117,35 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
     _timer?.cancel();
     _saveTestRecord();
   }
-  
+
   Future<void> _saveTestRecord() async {
     if (_startTime == null) return;
-    
+
     setState(() {
       _isSubmitting = true;
     });
-    
+
     try {
       final user = await Amplify.Auth.getCurrentUser();
       final endTime = DateTime.now();
-      
+
       final testRecord = StimuliTestRecord(
         userId: user.userId,
         startTime: TemporalDateTime(_startTime!),
         endTime: TemporalDateTime(endTime),
       );
-      
+
       final request = ModelMutations.create(
         testRecord,
         authorizationMode: APIAuthorizationType.userPools,
       );
-      
+
       final response = await Amplify.API.mutate(request: request).response;
-      
+
       if (response.errors?.isNotEmpty ?? false) {
         throw Exception('Save failed: ${response.errors}');
       }
       _showTestCompleteDialog();
-      
     } catch (e) {
       print('Error saving test record: $e');
       _showTestCompleteDialog();
@@ -196,7 +200,8 @@ class _ImageStimuliPageState extends State<ImageStimuliPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Test Interrupted'),
-          content: Text('The test has been interrupted. Completed showing $totalImagesShown images out of ${imagePaths.length}.'),
+          content: Text(
+              'The test has been interrupted. Completed showing $totalImagesShown images out of ${imagePaths.length}.'),
           actions: <Widget>[
             TextButton(
               child: Text('Return to Home'),
@@ -302,13 +307,13 @@ class StartTestScreen extends StatelessWidget {
         SizedBox(height: 30),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF4FC3F7),
+            backgroundColor: Color(0xFF2298FF),
             padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
           ),
           onPressed: onStart,
           child: Text(
             'Start Test',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),
       ],
@@ -345,7 +350,7 @@ class TestScreen extends StatelessWidget {
                     '+',
                     style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
                   )
-                : currentImageIndex < imagePaths.length 
+                : currentImageIndex < imagePaths.length
                     ? Image.asset(
                         imagePaths[currentImageIndex],
                         width: TestConstants.IMAGE_SIZE,

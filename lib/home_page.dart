@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       });
 
       final user = await Amplify.Auth.getCurrentUser();
-      
+
       final request = ModelQueries.get(
         UserInformation.classType,
         UserInformationModelIdentifier(id: user.userId),
@@ -40,10 +40,10 @@ class _HomePageState extends State<HomePage> {
       );
 
       final response = await Amplify.API.query(request: request).response;
-      
+
       if (response.data != null) {
         final userData = response.data as UserInformation;
-        
+
         setState(() {
           // If user has set a name, use it; otherwise keep the default value "User"
           if (userData.name != null && userData.name!.isNotEmpty) {
@@ -64,9 +64,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isLoading 
-            ? Text('Loading...')
-            : Text('Welcome, $_userName!'),
+        title: _isLoading ? Text('Loading...') : Text('Welcome, $_userName!'),
         backgroundColor: Color(0xFF4FC3F7),
         actions: [
           IconButton(
@@ -100,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                 });
               },
               child: Card(
-                color: Color(0xFFF1F8E9),
+                color: Color(0xFFF8FFE3),
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -124,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Card(
-                color: Color(0xFFF1F8E9),
+                color: Color(0xFFF8FFE3),
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -148,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Card(
-                color: Color(0xFFF1F8E9),
+                color: Color(0xFFF8FFE3),
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -172,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Card(
-                color: Color(0xFFF1F8E9),
+                color: Color(0xFFF8FFE3),
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -196,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Card(
-                color: Color(0xFFF1F8E9),
+                color: Color(0xFFF8FFE3),
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -220,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Card(
-                color: Color(0xFFF1F8E9),
+                color: Color(0xFFF8FFE3),
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

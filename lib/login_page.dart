@@ -51,7 +51,7 @@ class LoginPage extends StatelessWidget {
               'Welcome to MindCare',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFF4FC3F7),
+                color: Color(0xFF2298FF),
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
@@ -90,7 +90,7 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _loginUser(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF4FC3F7),
+                backgroundColor: Color(0xFF2298FF),
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -114,7 +114,7 @@ class LoginPage extends StatelessWidget {
               child: Text(
                 'No account? Register here',
                 style: TextStyle(
-                  color: Color(0xFFFFA726),
+                  color: Color(0xFFFFAF60),
                   fontSize: 16,
                 ),
               ),
